@@ -35,6 +35,7 @@
 #include <linux/wl12xx.h>
 #include <linux/platform_data/omap-abe-twl6040.h>
 #include <linux/ti_wilink_st.h>
+#include <linux/spi/spi.h>		// added on 2014.5.14 by koh
 
 #include <mach/hardware.h>
 #include <asm/hardware/gic.h>
@@ -462,6 +463,63 @@ static int __init omap4_panda_i2c_init(void)
 	return 0;
 }
 
+
+/*
+ * SPI driver initialization. added on 2014.5.13 by koh
+ */
+static const struct spi_board_info panda_spi[] __initconst = {
+	{
+		.modalias = "spidev",
+		.bus_num = 1,
+		.chip_select = 0,
+		.max_speed_hz = 400000,
+		.mode = SPI_MODE_0,
+	},
+	{
+		.modalias = "spidev",
+		.bus_num = 1,
+		.chip_select = 1,
+		.max_speed_hz = 20000000,
+		.mode = SPI_MODE_0,
+	},
+	{
+		.modalias = "spidev",
+		.bus_num = 1,
+		.chip_select = 2,
+		.max_speed_hz = 20000000,
+		.mode = SPI_MODE_0,
+	},
+	{
+		.modalias = "spidev",
+		.bus_num = 1,
+		.chip_select = 3,
+		.max_speed_hz = 20000000,
+		.mode = SPI_MODE_0,
+	},
+};
+
+/*
+ * SPI driver initialization. added on 2014.5.13 by koh
+ */
+ static void __init panda_spi_devices_init(void) {
+      /* muxing pins might be only required if
+       * you've connecting
+       * device to CS other than CS0
+       ***  This worked for me, add:
+         omap_mux_init_signal("mcspi1_cs1", OMAP_PIN_OUTPUT); // sub "mcspi1_cs2 for CS2 etc.
+         to activate CS1 on header pin #10.
+         Make sure your call to panda_spi_devices_init() is after omap_serial_init()
+         in omap4_panda_init function.
+       *** using CS[1-3] will break UART1 ***
+       */
+	omap_mux_init_signal("mcspi1_cs1", OMAP_PIN_OUTPUT|OMAP_MUX_MODE0);
+	omap_mux_init_signal("mcspi1_cs2", OMAP_PIN_OUTPUT|OMAP_MUX_MODE0);
+	omap_mux_init_signal("mcspi1_cs3", OMAP_PIN_OUTPUT|OMAP_MUX_MODE0);
+
+      spi_register_board_info(panda_spi, ARRAY_SIZE(panda_spi));
+ }
+
+
 #ifdef CONFIG_OMAP_MUX
 static struct omap_board_mux board_mux[] __initdata = {
 	/* WLAN IRQ - GPIO 53 */
@@ -718,6 +776,10 @@ static void __init omap4_panda_init(void)
 	platform_add_devices(panda_devices, ARRAY_SIZE(panda_devices));
 	platform_device_register(&omap_vwlan_device);
 	omap_serial_init();
+
+	panda_spi_devices_init();	/* added on 2014.5.13 by koh */
+					/* this must be called after board_serial_init() call. */
+
 	omap_sdrc_init(NULL, NULL);
 	omap4_twl6030_hsmmc_init(mmc);
 	omap4_ehci_init();
