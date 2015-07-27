@@ -490,11 +490,10 @@ static const struct spi_board_info panda_spi[] __initconst = {
 		.mode = SPI_MODE_0,
 	},
 	{
-		.modalias = "spidev",
+		.modalias = "ds3234",
 		.bus_num = 1,
 		.chip_select = 3,
-		.max_speed_hz = 20000000,
-		.mode = SPI_MODE_0,
+		.max_speed_hz = 400000,
 	},
 };
 
