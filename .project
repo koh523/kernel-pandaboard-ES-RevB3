@@ -23,7 +23,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildArguments</key>
-					<value>ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- INSTALL_MOD_PATH=./modules</value>
+					<value>-j2 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>
@@ -51,7 +51,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
-					<value>oldconfig prepare modules modules_install</value>
+					<value>uImage</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
